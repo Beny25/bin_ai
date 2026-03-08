@@ -1,14 +1,11 @@
 // lib/huggingface.ts
-"use client"; // client side wajib biar fetch & state jalan
+"use client";
 
 export async function queryHuggingFace(userInput: string): Promise<string> {
-  const token = localStorage.getItem("HUGGINGFACE_API_KEY") || process.env.HUGGINGFACE_API_KEY;
-  const model = process.env.HF_MODEL || "mistralai/Mistral-7B-Instruct-v0.2";
+  // Ambil token dari env, kosong aja kalau free-tier
+  const token = process.env.HUGGINGFACE_API_KEY || "";
 
-  if (!token) {
-    console.error("Hugging Face token not found!");
-    return "Error: Hugging Face token not set. Please go to Settings and save your token.";
-  }
+  const model = process.env.HF_MODEL || "google/flan-t5-small";
 
   const basePrompt = `
 You are BinAI, an AI assistant specialized in educating users about Binance products and crypto trading. 
@@ -29,7 +26,7 @@ User question: ${userInput}
     const res = await fetch(`https://api-inference.huggingface.co/models/${model}`, {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: token ? `Bearer ${token}` : "",
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ inputs: basePrompt }),
@@ -38,14 +35,11 @@ User question: ${userInput}
     const data = await res.json();
     console.log("Hugging Face response:", data);
 
-    if (data?.error) {
-      console.error("Hugging Face API Error:", data.error);
-      return `Error: ${data.error}`;
-    }
+    if (data?.error) return `Error: ${data.error}`;
 
-    return data?.[0]?.generated_text || "No response from AI";
+    return data?.[0]?.generated_text || data?.generated_text || "No response from AI";
   } catch (e) {
     console.error("Hugging Face fetch failed:", e);
     return "Error: AI response failed. Check console for details.";
   }
-      }
+}
