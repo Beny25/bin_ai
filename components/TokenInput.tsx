@@ -1,4 +1,4 @@
-"use client"; // ← tambahin ini di baris pertama
+"use client";
 
 import { useState } from "react";
 
@@ -6,8 +6,13 @@ export default function TokenInput() {
   const [token, setToken] = useState("");
 
   const saveToken = () => {
+    if (!token) {
+      alert("Please enter a valid Hugging Face token!");
+      return;
+    }
     localStorage.setItem("HUGGINGFACE_API_KEY", token);
     alert("Token saved locally!");
+    console.log("Saved Hugging Face token:", token);
   };
 
   return (
