@@ -1,3 +1,5 @@
+"use client"; // ← tambahin ini di baris pertama
+
 import { useState } from "react";
 
 export default function TokenInput() {
@@ -16,7 +18,9 @@ export default function TokenInput() {
         value={token}
         onChange={(e) => setToken(e.target.value)}
       />
-      <button className="bg-yellow-400 p-2 rounded" onClick={saveToken}>Save Token</button>
+      <button className="bg-yellow-400 p-2 rounded" onClick={saveToken}>
+        Save Token
+      </button>
     </div>
   );
 }
